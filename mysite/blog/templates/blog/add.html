@@ -1,0 +1,187 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}Créer un Article - Blog Django{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb bg-white p-3 rounded shadow-sm">
+            <li class="breadcrumb-item">
+                <a href="{% url 'home' %}" class="text-decoration-none">
+                    <i class="bi bi-house-door"></i> Accueil
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                Nouvel Article
+            </li>
+        </ol>
+    </nav>
+
+    <!-- Form Card -->
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg">
+                <!-- Card Header -->
+                <div class="card-header-custom">
+                    <h2 class="mb-0">
+                        <i class="bi bi-file-earmark-plus"></i> 
+                        Créer un Nouvel Article
+                    </h2>
+                    <p class="mb-0 mt-2 opacity-75">
+                        Partagez vos idées et expériences avec la communauté
+                    </p>
+                </div>
+
+                <!-- Card Body -->
+                <div class="card-body p-4 p-md-5">
+                    <form method="POST" id="addPostForm">
+                        {% csrf_token %}
+                        
+                        <!-- Auteur -->
+                        <div class="mb-4">
+                            <label for="author" class="form-label fw-bold">
+                                <i class="bi bi-person"></i> Auteur
+                                <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" 
+                                   class="form-control form-control-lg" 
+                                   id="author" 
+                                   name="author" 
+                                   placeholder="Votre nom"
+                                   required
+                                   autocomplete="name">
+                            <div class="form-text">
+                                <i class="bi bi-info-circle"></i> 
+                                Entrez votre nom ou pseudo
+                            </div>
+                        </div>
+                        
+                        <!-- Titre -->
+                        <div class="mb-4">
+                            <label for="title" class="form-label fw-bold">
+                                <i class="bi bi-pencil"></i> Titre de l'article
+                                <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" 
+                                   class="form-control form-control-lg" 
+                                   id="title" 
+                                   name="title" 
+                                   placeholder="Ex: deadpool "
+                                   required
+                                   autocomplete="off">
+                            <div class="form-text">
+                                <i class="bi bi-info-circle"></i> 
+                                Choisissez un titre accrocheur et descriptif
+                            </div>
+                        </div>
+
+                        <!-- Contenu -->
+                        <div class="mb-4">
+                            <label for="content" class="form-label fw-bold">
+                                <i class="bi bi-file-text"></i> Contenu de l'article
+                                <span class="text-danger">*</span>
+                            </label>
+                            <textarea class="form-control" 
+                                      id="content" 
+                                      name="content" 
+                                      rows="12"
+                                      placeholder="Écrivez votre article ici... 
+
+Partagez vos connaissances, vos expériences, vos découvertes...
+
+Vous pouvez structurer votre contenu avec plusieurs paragraphes."
+                                      required></textarea>
+                            <div class="form-text">
+                                <i class="bi bi-info-circle"></i> 
+                                Minimum 50 caractères recommandés
+                            </div>
+                        </div>
+
+                        <!-- Divider -->
+                        <hr class="my-4">
+
+                        <!-- Buttons -->
+                        <div class="d-flex gap-2 flex-wrap justify-content-end">
+                            <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-lg">
+                                <i class="bi bi-x-circle"></i> Annuler
+                            </a>
+                            <button type="submit" class="btn btn-custom-primary btn-lg">
+                                <i class="bi bi-check-circle"></i> Publier l'article
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Tips Card -->
+            <div class="card mt-4 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-lightbulb text-warning"></i> 
+                        Conseils pour un bon article
+                    </h5>
+                    <ul class="mb-0">
+                        <li>Utilisez un titre clair et descriptif</li>
+                        <li>Structurez votre contenu avec des paragraphes</li>
+                        <li>Relisez-vous avant de publier</li>
+                        <li>Soyez authentique et partagez votre expérience</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Validation du formulaire
+    document.getElementById('addPostForm').addEventListener('submit', function(e) {
+        const author = document.getElementById('author').value.trim();
+        const title = document.getElementById('title').value.trim();
+        const content = document.getElementById('content').value.trim();
+        
+        if (author.length < 2) {
+            e.preventDefault();
+            alert('⚠️ Le nom de l\'auteur doit contenir au moins 2 caractères');
+            return false;
+        }
+        
+        if (title.length < 3) {
+            e.preventDefault();
+            alert('⚠️ Le titre doit contenir au moins 3 caractères');
+            return false;
+        }
+        
+        if (content.length < 10) {
+            e.preventDefault();
+            alert('⚠️ Le contenu doit contenir au moins 10 caractères');
+            return false;
+        }
+        
+        // Afficher un loader pendant la soumission
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Publication...';
+        submitBtn.disabled = true;
+    });
+    
+    // Compteur de caractères en temps réel (optionnel)
+    const contentTextarea = document.getElementById('content');
+    const titleInput = document.getElementById('title');
+    const authorInput = document.getElementById('author');
+    
+    authorInput.addEventListener('input', function() {
+        console.log('Auteur:', this.value.length, 'caractères');
+    });
+    
+    titleInput.addEventListener('input', function() {
+        console.log('Titre:', this.value.length, 'caractères');
+    });
+    
+    contentTextarea.addEventListener('input', function() {
+        console.log('Contenu:', this.value.length, 'caractères');
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,138 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}{{ post.title }} - ComicHub{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb bg-white p-3 rounded shadow-sm">
+            <li class="breadcrumb-item">
+                <a href="{% url 'home' %}" class="text-decoration-none">
+                    <i class="bi bi-house-door"></i> Accueil
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                {{ post.title|truncatewords:5 }}
+            </li>
+        </ol>
+    </nav>
+
+    <!-- Article Card -->
+    <div class="card shadow-lg">
+        <!-- Header -->
+        <div class="card-header-custom">
+            <div class="d-flex justify-content-between align-items-start flex-wrap">
+                <div>
+                    <h1 class="h2 mb-2">{{ post.title }}</h1>
+                    <div class="d-flex gap-3 flex-wrap">
+                        <span class="badge bg-light text-dark">
+                            <i class="bi bi-person-fill"></i> 
+                            {{ post.author }}
+                        </span>
+                        <span class="badge bg-light text-dark">
+                            <i class="bi bi-calendar3"></i> 
+                            {{ post.created_at|date:"d F Y" }}
+                        </span>
+                        <span class="badge bg-light text-dark">
+                            <i class="bi bi-clock"></i> 
+                            {{ post.created_at|time:"H:i" }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Body -->
+        <div class="card-body p-4 p-md-5">
+            <!-- Content -->
+            <div class="post-content">
+                <p class="lead text-muted mb-4">
+                    {{ post.content|linebreaks }}
+                </p>
+            </div>
+
+            <!-- Divider -->
+            <hr class="my-5">
+
+            <!-- Actions -->
+            <div class="d-flex gap-2 flex-wrap justify-content-center">
+                <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Retour à la liste
+                </a>
+                <a href="{% url 'edit' post.id %}" class="btn btn-custom-primary">
+                    <i class="bi bi-pencil-square"></i> Modifier
+                </a>
+                <button type="button" 
+                        class="btn btn-danger" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#deleteModal">
+                    <i class="bi bi-trash"></i> Supprimer
+                </button>
+            </div>
+        </div>
+
+        <!-- Footer Info -->
+        <div class="card-footer bg-light">
+            <div class="row text-center">
+                <div class="col-md-4">
+                    <i class="bi bi-eye text-primary fs-4"></i>
+                    <p class="mb-0 mt-2 small text-muted">Vue détaillée</p>
+                </div>
+                <div class="col-md-4">
+                    <i class="bi bi-heart text-danger fs-4"></i>
+                    <p class="mb-0 mt-2 small text-muted">Article publié</p>
+                </div>
+                <div class="col-md-4">
+                    <i class="bi bi-share text-success fs-4"></i>
+                    <p class="mb-0 mt-2 small text-muted">Partager</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Related Articles (Optional) -->
+    <div class="mt-5">
+        <h3 class="text-white mb-4">
+            <i class="bi bi-collection"></i> Autres articles
+        </h3>
+        <div class="text-center">
+            <a href="{% url 'home' %}" class="btn btn-light btn-lg">
+                <i class="bi bi-grid-3x3"></i> Voir tous les articles
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmation de suppression -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteModalLabel">
+                    <i class="bi bi-exclamation-triangle"></i> Confirmer la suppression
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-0">
+                    Êtes-vous sûr de vouloir supprimer l'article 
+                    <strong>"{{ post.title }}"</strong> ?
+                </p>
+                <p class="text-muted small mb-0 mt-2">
+                    <i class="bi bi-info-circle"></i> 
+                    Cette action est irréversible.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x"></i> Annuler
+                </button>
+                <a href="{% url 'delete' post.id %}" class="btn btn-danger">
+                    <i class="bi bi-trash"></i> Oui, supprimer
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
